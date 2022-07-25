@@ -1,0 +1,14 @@
+{% extends 'quiz_app/base.html' %}
+{% block body_block %}
+  <form method="POST" action="{% url 'quizName' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" class='btn btn-primary' value="Submit">
+  </form> 
+  <br>
+  <br>
+
+  <h3>Once all the quiz questions are added you can Log out</h3>
+  <br>
+  <a class="btn btn-primary" href="{% url  'logout' %}">Log Out</a>         
+{% endblock %}

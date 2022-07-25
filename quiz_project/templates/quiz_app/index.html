@@ -1,0 +1,17 @@
+{% extends "quiz_app/base.html" %}
+{% block body_block %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h1>Welcome to the Quiz App Assignment</h1>
+    {% if user.is_authenticated %}
+        <h2>Welcome {{ user.username }}!</h2>
+        <a class="btn btn-primary" href="{% url  'quizName' %}">To create a quiz</a>
+    {% else %}
+        <p>To take the quiz click the below link</p>
+        <a class="btn btn-primary" href="{% url  'takequiz' %}">Quiz</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
