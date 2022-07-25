@@ -1,16 +1,16 @@
+from xml.dom.domreg import registered
 from django.http import HttpResponse
-from quiz_app.forms import UserForm
-from django.shortcuts import render
-from .forms import UserForm
+from quiz_app.forms import UserForm,questionsform
+from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from .models import * 
 
-def index(request):
-    
-    return render(request,'quiz_app/base.html')
-# Create your views here.
+def index(request):    
+    return render(request,'quiz_app/index.html')
+
 def register(request):
     registered=False
     if request.method=="POST":
@@ -26,11 +26,11 @@ def register(request):
             print(user_form.errors)
     else: 
         user_form=UserForm()
-
     return render(request,'quiz_app/register.html',{
-         'registered':registered,
+        'registered':registered,
         'user_form':user_form
-    })    
+    })  
+         
 @login_required
 def special(request):
   
@@ -49,11 +49,11 @@ def user_login(request):
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
 
-        # If we have a user
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect(reverse('index'))
+                Ques.objects.all().delete()
+                return redirect('quizName')
             else:
     
                 return HttpResponse("Your account is not active.")
@@ -65,6 +65,58 @@ def user_login(request):
     else:
        
         return render(request, 'quiz_app/login.html', {})
+
+def quiz(request):
+    if request.user.is_staff:
+        form=questionsform()
+        if(request.method=='POST'):
+            form=questionsform(request.POST)
+            if(form.is_valid()):
+                form.save()
+                form=questionsform()
+                context={'form':form}
+                return render(request,'quiz_app/quizName.html',context)
+        context={'form':form}
+        return render(request,'quiz_app/quizName.html',context)
+    else: 
+        return redirect('index') 
+
+def takequiz(request):
+    if request.method == 'POST':
+        print(request.POST)
+        questions=Ques.objects.all()
+        score=0
+        wrong=0
+        correct=0
+        total=0
+        for q in questions:
+            total+=1
+            print(request.POST.get(q.question))
+            if q.ans==request.POST.get(q.question):
+                score+=10
+                correct+=1
+            else:
+                wrong+=1
+        percent = score/(total*10) *100
+        context = {
+            'score':score,
+            'correct':correct,
+            'wrong':wrong,
+            'percent':percent,
+            'total':total
+        }
+        return render(request,'quiz_app/results.html',context)
+    else:
+        questions=Ques.objects.all()
+        context = {
+            'questions':questions
+        }
+        return render(request,'quiz_app/takequiz.html',context)
+
+    
+
+          
+
 
 
 

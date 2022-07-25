@@ -13,8 +13,9 @@
       <div class="navbar-nav">
       
         <a class="navbar-brand" href="{% url 'index' %}">Quiz App</a>
-        <a class="nav-item nav-link" href="{% url 'admin:index' %}">Admin</a>
         <a class="nav-item nav-link" href="{% url  'register' %}">Register</a>
+        <a class="nav-item nav-link" href="{% url  'takequiz' %}">Quiz</a>
+
 
         {# Some logic on what to display for last item#}
         {% if user.is_authenticated %}

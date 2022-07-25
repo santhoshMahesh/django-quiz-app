@@ -3,11 +3,13 @@
 
 <div class="container">
   <div class="jumbotron">
-    <h1>Quiz app</h1>
+    <h1>Welcome to the Quiz App Assignment</h1>
     {% if user.is_authenticated %}
         <h2>Welcome {{ user.username }}!</h2>
+        <a class="btn btn-primary" href="{% url  'quizName' %}">To create a quiz</a>
     {% else %}
-        <h2>Welcome to the site!</h2>
+        <p>To take the quiz click the below link</p>
+        <a class="btn btn-primary" href="{% url  'takequiz' %}">Quiz</a>
     {% endif %}
   </div>
 </div>
