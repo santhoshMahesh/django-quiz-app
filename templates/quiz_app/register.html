@@ -6,6 +6,8 @@
     <div class="jumbotron">
       {% if registered %}
         <h1>Thank you for registering!</h1>
+        <a class="nav-item nav-link" href="{% url  'quizName' %}">Click to create a Quiz</a>
+
       {% else %}
         <h1>Welcome to the Quiz app</h1>
         <h3>Register Here!</h3>

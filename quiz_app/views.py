@@ -2,11 +2,18 @@ from xml.dom.domreg import registered
 from django.http import HttpResponse
 from quiz_app.forms import UserForm,questionsform
 from django.shortcuts import render,redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout,get_permission_codename
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import * 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User, Permission
+
+
+content_type = ContentType.objects.get_for_model(Ques)
+post_permission = Permission.objects.filter(content_type=content_type)
+
 
 def index(request):    
     return render(request,'quiz_app/index.html')
@@ -19,8 +26,8 @@ def register(request):
         if user_form.is_valid():
             user=user_form.save()
             user.set_password(user.password)
+            user.is_staff=True
             user.save()
-
             registered=True
         else:
             print(user_form.errors)
@@ -66,8 +73,10 @@ def user_login(request):
        
         return render(request, 'quiz_app/login.html', {})
 
+@login_required
 def quiz(request):
     if request.user.is_staff:
+        Ques.objects.all().delete()
         form=questionsform()
         if(request.method=='POST'):
             form=questionsform(request.POST)
